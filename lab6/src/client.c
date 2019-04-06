@@ -228,6 +228,7 @@ int main(int argc, char **argv) {
   }
     printf("answer: %llu\n", total);
   free(to);
+	remove(servers);
 
   return 0;
 }

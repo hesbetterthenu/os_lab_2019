@@ -36,11 +36,14 @@ int main(int argc, char **argv) {
   int tnum = -1;
   int port = -1;
 
+  char servers[255] = {'\0'}; // TODO: explain why 255
+
   while (true) {
     int current_optind = optind ? optind : 1;
 
     static struct option options[] = {{"port", required_argument, 0, 0},
                                       {"tnum", required_argument, 0, 0},
+                                      {"servers", required_argument, 0, 0},
                                       {0, 0, 0, 0}};
 
     int option_index = 0;
@@ -60,6 +63,10 @@ int main(int argc, char **argv) {
         tnum = atoi(optarg);
 	if(tnum < 1)
 		tnum = -1;
+        break;
+      case 2:
+        // TODO: your code here
+        memcpy(servers, optarg, strlen(optarg));
         break;
       default:
         printf("Index %d is out of options\n", option_index);
@@ -84,6 +91,13 @@ int main(int argc, char **argv) {
     fprintf(stderr, "Can not create server socket!");
     return 1;
   }
+	
+	FILE* f = fopen(servers, "ab");
+	flockfile(f);
+	fprintf(f, "%s:%i\n", "127.0.0.1", port);
+	printf("%s:%i\n", "127.0.0.1", port);
+	funlockfile(f);
+	fclose(f);
 
   struct sockaddr_in server;
   server.sin_family = AF_INET;
@@ -166,7 +180,7 @@ int main(int argc, char **argv) {
         total = MultModulo(total, result, mod);
       }
 
-      printf("Total: %llu\n", total);
+      printf("%llu, %llu; Total: %llu\n", begin, end, total);
 
       char buffer[sizeof(total)];
       memcpy(buffer, &total, sizeof(total));
